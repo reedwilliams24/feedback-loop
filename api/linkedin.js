@@ -3,8 +3,6 @@ const express = require('express'),
       request = require('request'),
       envar = require('envar');
 
-envar.import('env.json');
-
 app.post('/getAccessToken', (req, res) => {
   const form = Object.assign(req.body, {
     grant_type: 'authorization_code',
