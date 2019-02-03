@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.use('/feedback-loop/api/todo', require('./api/todo.js'));
+app.use('/api/todo', require('./api/todo.js'));
 
 app.use('/api/linkedin', [
   // TODO: add security middleware
