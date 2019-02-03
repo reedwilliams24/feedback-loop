@@ -1,0 +1,15 @@
+{
+  "name": "feedback-loop",
+  "main": "index.html",
+  "dependencies": {
+    "iron-ajax": "PolymerElements/iron-ajax#^2.0.0",
+    "polymer": "Polymer/polymer#^2.0.0",
+    "express": "^4.16.4",
+    "cors": "*",
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  }
+}
