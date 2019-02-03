@@ -1,0 +1,124 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<script src="/bower_components/lodash/dist/lodash.min.js"></script>
+
+<dom-module id="feedback-loop-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-ajax
+      id="accessToken"
+      method="POST"
+      url="/api/linkedin/getAccessToken"
+      body="[[accessTokenBody]]"
+      content-type="application/json"
+      on-response="_setAccessToken"
+    ></iron-ajax>
+
+    <iron-ajax
+      id="profile"
+      method="POST"
+      url="/api/linkedin/profile"
+      body="[[profileBody]]"
+      content-type="application/json"
+    ></iron-ajax>
+
+    <iron-ajax
+      id="longUrl"
+      method="GET"
+      url="/api/linkedin/longUrl"
+      content-type="application/json"
+    ></iron-ajax>
+
+    <iron-ajax
+      auto
+      url="/api/todo/all"
+      content-type="JSON"
+      last-response="{{todos}}"
+    ></iron-ajax>
+
+    <h2>Welcome to Feedback Loop</h2>
+  </template>
+
+  <script>
+    class FeedbackLoopApp extends Polymer.Element {
+      static get is() { return 'feedback-loop-app'; }
+      static get properties() {
+        return {
+          /** code used to get access token */
+          code: String,
+          accessTokenBody: {
+            type: Object,
+            computed: '_computeaccessTokenBody(code)',
+            observer: '_observeAccessTokenBody'
+          },
+          accessTokenResponse: Object,
+          accessToken: String,
+          profileBody: {
+            type: Object,
+            computed: '_computeProfileBody(accessToken)',
+            observer: '_observeProfileBody'
+          },
+          // TODO: remove - just in to show how to retrieve info from mongo
+          todos: {
+            type: Array,
+            value: () => []
+          },
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        const params = new URLSearchParams(window.location.search),
+              code = params.get('code'),
+              error = params.get('error');
+        let request;
+
+        if (error) {
+          console.warn(error);
+          return;
+        }
+
+        if (!code) {
+          request = this.$.longUrl.generateRequest();
+
+          request.completes.then((res, error) => {
+            window.location.replace(request.response);
+          });
+        } else if (!this.get('code')) {
+          this.set('code', code);
+          window.history.replaceState(null, null, location.pathname); // clean up url
+        }
+      }
+
+      _get(object, path) {
+        return _.get(object, path);
+      }
+
+      _computeaccessTokenBody(code) {
+        return { code };
+      }
+      _computeProfileBody(accessToken) {
+        return { accessToken };
+      }
+
+      _observeProfileBody() {
+        this.$.profile.generateRequest();
+      }
+      _observeAccessTokenBody() {
+        this.$.accessToken.generateRequest();
+      }
+
+      _setAccessToken(e) {
+        this.set('accessToken', _.get(e, 'detail.response.access_token'));
+      }
+    }
+
+    window.customElements.define(FeedbackLoopApp.is, FeedbackLoopApp);
+  </script>
+</dom-module>
