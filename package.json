@@ -10,6 +10,7 @@
     "body-parser": "^1.18.3",
     "envar": "^2.0.0",
     "express": "^4.16.4",
+    "helmet": "^3.15.0",
     "mongodb": "^3.1.10",
     "request": "^2.88.0"
   },

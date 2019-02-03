@@ -5,9 +5,12 @@ const express = require('express'),
       request = require('request'),
       app = express(),
       router = express.Router(),
-      envar = require('envar');
+      envar = require('envar'),
+      helmet = require('helmet');
 
 envar.import('env.json');
+
+app.use(helmet());
 
 // TODO: look into not serving up everything
 app.use(express.static(path.join(__dirname, '/')));
